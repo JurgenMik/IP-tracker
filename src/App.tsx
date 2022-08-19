@@ -1,8 +1,43 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Arrow from './assets/icon-arrow.svg'
+import axios from 'axios';
 
 function App() {
-  return (
+
+     interface resInterface {
+        ip: string,
+        address: string,
+        timezone: string,
+        isp: string,
+        lat: number,
+        lng: number,
+    }
+
+    const [location, setLocation] = useState<string>('');
+    const [ipData, setData] = useState<resInterface>({
+        ip: '',
+        address:'',
+        timezone:'',
+        isp: '',
+        lat: 0,
+        lng: 0,
+    });
+
+    const getLocationData = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const apiKey = 'at_8mNQ5ojf6nhZByp4NIj0O8e9PJXr8';
+        const { data } = await axios.get(`https://geo.ipify.org/api/v2/country,city?apiKey=${apiKey}&ipAddress=${location}`);
+            setData({
+                ip: data.ip,
+                address: data.location.city,
+                timezone: data.location.timezone,
+                isp: data.isp,
+                lat: data.lat,
+                lng: data.lng,
+            })
+    };
+
+    return (
     <div className="h-screen w-full">
         <div className="bg-pattern-texture bg-cover w-full h-1/4 relative">
             <div className="flex justify-center text-white text-4xl font-medium">
@@ -11,9 +46,12 @@ function App() {
                 </h1>
             </div>
             <div className="flex justify-center mt-10 w-full">
-                <form className="w-1/3">
-                    <input className="w-full p-4 rounded-xl relative" placeholder="Search for any IP adress or domain"/>
-                    <button className="float-right bg-sky-400 absolute p-4 h-14 -ml-4 rounded-tr-lg rounded-br-lg bg-slate-900">
+                <form  onSubmit={getLocationData} className="w-1/3">
+                    <input className="w-full p-4 rounded-xl relative"
+                           placeholder="Search for any IP adress or domain"
+                           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {setLocation(e.target.value)}}
+                    />
+                    <button type='submit' className="float-right bg-sky-400 absolute p-4 h-14 -ml-4 rounded-tr-lg rounded-br-lg bg-slate-900">
                         <img src={Arrow} alt="arrow"/>
                     </button>
                 </form>
@@ -24,7 +62,7 @@ function App() {
                        <p>IP ADDRESS</p>
                         <div className="mt-4 sm:text-xl text-lg text-black w-full">
                             <h1>
-                                192.212.171.101
+                                {ipData.ip}
                             </h1>
                         </div>
                     </div>
@@ -32,7 +70,7 @@ function App() {
                         <p>LOCATION</p>
                         <div className="mt-4 sm:text-xl text-lg text-black">
                             <h1>
-                                Brooklyn, NY 10001
+                                {ipData.address}
                             </h1>
                         </div>
                     </div>
@@ -40,7 +78,7 @@ function App() {
                         <p>TIMEZONE</p>
                         <div className="mt-4 sm:text-xl text-lg text-black">
                             <h1>
-                                UTC-05:00
+                                {ipData.timezone}
                             </h1>
                         </div>
                     </div>
@@ -48,7 +86,7 @@ function App() {
                         <p>ISP</p>
                         <div className="mt-4 sm:text-xl text-lg text-black sm:mb-0 mb-2">
                             <h1>
-                                SpaceX Starlink
+                                {ipData.isp}
                             </h1>
                         </div>
                     </div>
