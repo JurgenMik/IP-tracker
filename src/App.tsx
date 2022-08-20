@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import Arrow from './assets/icon-arrow.svg'
+import Arrow from './assets/icon-arrow.svg';
 import axios from 'axios';
+import Map from './components/Map';
 
 function App() {
 
@@ -32,14 +33,14 @@ function App() {
                 address: data.location.city,
                 timezone: data.location.timezone,
                 isp: data.isp,
-                lat: data.lat,
-                lng: data.lng,
+                lat: data.location.lat,
+                lng: data.location.lng,
             })
     };
 
     return (
     <div className="h-screen w-full">
-        <div className="bg-pattern-texture bg-cover w-full h-1/4 relative">
+        <div className="bg-pattern-texture bg-cover w-full h-1/4 relative z-50">
             <div className="flex justify-center text-white text-4xl font-medium">
                 <h1 className="mt-10">
                     IP Address Tracker
@@ -92,6 +93,9 @@ function App() {
                     </div>
                 </div>
             </div>
+        </div>
+        <div id="map" className="h-3/4 w-full">
+            <Map {...ipData}/>
         </div>
     </div>
   );
